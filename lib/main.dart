@@ -211,6 +211,73 @@ class _ToDoListState extends State<ToDoList> {
     return assets[0];
   }
 
+  //creates a dictionary
+  //loops through list of items and finds the list of cats in those items
+  //loops through the cat list of each item
+  //checks if cat in list is in dic, if so adds to counter else initializes in dic
+  //loops through dic to find key with highest value
+  //returns that key
+  String getMostCommonCat() {
+    Map<String, int> dic = {};
+    for (int i = 0; i < items.length; i++) {
+      //print(i);
+      //print(items[i].catList);
+      for (int j = 0; j < items[i].catList.length; j++) {
+        //print(items[i].catList[j]);
+        if (dic.keys.contains(items[i].catList[j]) == false) {
+          dic[items[i].catList[j]] = 1;
+          //print(dic);
+        } else if (dic.entries.contains(items[i].catList[j])) {
+          //print(dic);
+          dic[items[i].catList[j]]! + 1;
+
+          //dic.entries.contains(items[i].catList[j])
+        }
+      }
+    }
+    //print(dic);
+    String mc = '';
+    int max = 0;
+    for (int i = 0; i < dic.length; i++) {
+      if (dic.values.elementAt(i) > max) {
+        mc = dic.entries.elementAt(i).key as String;
+        max = dic.values.elementAt(i);
+      }
+    }
+    return mc;
+  }
+
+  //build an alert dialouge with more cat info
+  //the alert dialouge tells which cat has the most occurences in the list of cats
+  //accessed through hamburger at top right of screen
+  Future<void> _commonCat(BuildContext context) async {
+    print("Loading Most Common Cat");
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Common Cat'),
+            content: SizedBox(
+              width: 100,
+              height: 60,
+              child: Text(getMostCommonCat()),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                key: const Key("OKButton"),
+                style: yesStyle,
+                child: const Text('Leave'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,6 +297,14 @@ class _ToDoListState extends State<ToDoList> {
               //newCat: _newCat(),
             );
           }).toList(),
+        ),
+        //here is new button
+        endDrawer: ElevatedButton(
+          key: const Key("MostCommonKey"),
+          child: const Text("Common Cat"),
+          onPressed: () {
+            _commonCat(context);
+          },
         ),
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
